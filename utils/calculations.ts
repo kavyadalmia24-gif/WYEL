@@ -1,5 +1,4 @@
-
-import { CalculationResult } from '../types.ts';
+import { CalculationResult } from '../types';
 
 export const calculateSIP = (
   monthlyInvestment: number,
@@ -233,14 +232,14 @@ export const calculateBudget = (
   const savings = income * 0.2;
 
   return {
-    investedAmount: needs, // Mapping 'Needs' to 'Invested' for UI consistency
-    totalInterest: wants,  // Mapping 'Wants' to 'Interest' for UI consistency
-    totalValue: savings,   // Mapping 'Savings' to 'Total' for UI consistency
+    investedAmount: needs, 
+    totalInterest: wants,  
+    totalValue: savings,   
     breakdown: [],
     chartData: [
-      { name: 'Needs (50%)', value: Math.round(needs), color: '#3b82f6' }, // Blue
-      { name: 'Wants (30%)', value: Math.round(wants), color: '#ec4899' }, // Pink
-      { name: 'Savings (20%)', value: Math.round(savings), color: '#10b981' } // Emerald
+      { name: 'Needs (50%)', value: Math.round(needs), color: '#3b82f6' }, 
+      { name: 'Wants (30%)', value: Math.round(wants), color: '#ec4899' }, 
+      { name: 'Savings (20%)', value: Math.round(savings), color: '#10b981' } 
     ]
   };
 };
@@ -275,6 +274,5 @@ export const calculateCompoundInterest = (
     rate: number,
     years: number
   ): CalculationResult => {
-    // Re-use lumpsum logic but explicit naming
     return calculateLumpsum(principal, rate, years);
   };
