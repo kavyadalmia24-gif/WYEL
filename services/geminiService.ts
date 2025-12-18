@@ -1,6 +1,6 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
-import { GeneratedLessonData } from "../types.ts";
+import { GeneratedLessonData } from "../types";
 
 // Initialize the Gemini API client using the environment variable
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });

@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
-import { calculateSIP, calculateLumpsum, calculateEMI } from '../utils/calculations.ts';
-import { CalculationResult } from '../types.ts';
+import { calculateSIP, calculateLumpsum, calculateEMI } from '../utils/calculations';
+import { CalculationResult } from '../types';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { Calculator } from 'lucide-react';
 

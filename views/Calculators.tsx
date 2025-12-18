@@ -12,8 +12,8 @@ import {
   calculateBudget,
   calculateSimpleInterest,
   calculateCompoundInterest
-} from '../utils/calculations.ts';
-import { CalculationResult } from '../types.ts';
+} from '../utils/calculations';
+import { CalculationResult } from '../types';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, AreaChart, Area, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { TrendingUp, PiggyBank, Landmark, Target, AlertTriangle, Briefcase, Coins, Wallet, Percent, PieChart as PieIcon, LucideIcon } from 'lucide-react';
 
