@@ -1,5 +1,6 @@
+
 import React from 'react';
-import { LayoutDashboard, GraduationCap, BrainCircuit, Sparkles, PieChart, CandlestickChart, X, User, Trophy, Rocket } from 'lucide-react';
+import { LayoutDashboard, GraduationCap, BrainCircuit, Sparkles, PieChart, CandlestickChart, X, User, Trophy, Rocket, LogOut } from 'lucide-react';
 import { ViewState, SkillType } from '../types';
 
 interface SidebarProps {
@@ -8,9 +9,11 @@ interface SidebarProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   activeSkill: SkillType;
+  onLogout: () => void;
+  userName: string;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate, isOpen, setIsOpen, activeSkill }) => {
+const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate, isOpen, setIsOpen, activeSkill, onLogout, userName }) => {
   
   const navItems = [
     { id: ViewState.DASHBOARD, label: 'Dashboard', icon: LayoutDashboard },
@@ -37,7 +40,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate, isOpen, setI
             <div className={`w-10 h-10 bg-gradient-to-br ${activeSkill === SkillType.FINANCE ? 'from-indigo-600 to-violet-600' : 'from-rose-600 to-orange-600'} rounded-xl flex items-center justify-center shadow-lg`}>
               <span className="text-white font-heading font-bold text-2xl">{activeSkill === SkillType.FINANCE ? 'D' : 'E'}</span>
             </div>
-            <span className="text-2xl font-heading font-bold text-slate-800 tracking-tight">{activeSkill === SkillType.FINANCE ? 'Denari' : 'Entrepreneurship'}</span>
+            <span className="text-2xl font-heading font-bold text-slate-800 tracking-tight">{activeSkill === SkillType.FINANCE ? 'Denari' : 'Entrepreneur'}</span>
           </div>
           <button onClick={() => setIsOpen(false)} className="md:hidden text-slate-400 hover:text-slate-800"><X size={24} /></button>
         </div>
@@ -53,16 +56,25 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate, isOpen, setI
             );
           })}
         </nav>
-        <div className="p-6">
-            <div className="glass-card p-4 rounded-2xl border bg-gradient-to-br from-indigo-500/5 to-violet-500/5">
+        
+        <div className="p-4 mt-auto">
+            <div className="glass-card p-4 rounded-2xl border bg-gradient-to-br from-indigo-500/5 to-violet-500/5 mb-2">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center text-white font-bold"><User size={18} /></div>
+                <div className={`w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center text-white font-bold`}>
+                  {userName ? userName[0].toUpperCase() : <User size={18} />}
+                </div>
                 <div className="flex-1 overflow-hidden">
-                  <p className="text-sm font-bold text-slate-800 truncate">{activeSkill === SkillType.FINANCE ? 'Financial Portfolio' : 'Entrepreneur Studio'}</p>
-                  <p className="text-xs text-indigo-600 font-medium truncate">Pro Access</p>
+                  <p className="text-sm font-bold text-slate-800 truncate">{userName || 'Member'}</p>
+                  <p className="text-[10px] text-indigo-600 font-bold uppercase tracking-widest">Active Member</p>
                 </div>
               </div>
             </div>
+            <button 
+              onClick={onLogout}
+              className="w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-rose-500 hover:bg-rose-50 transition-all font-bold text-sm"
+            >
+              <LogOut size={20} /> Logout
+            </button>
         </div>
       </div>
     </>
