@@ -1,4 +1,3 @@
-
 import React, { useMemo, useEffect, useState } from 'react';
 import { TrendingUp, TrendingDown, DollarSign, Award, ArrowRight, Zap, Target, BookOpen, Briefcase, CandlestickChart, Rocket, Sparkles, Loader2 } from 'lucide-react';
 import { ViewState, UserStats, Stock, SkillType } from '../types';
@@ -33,7 +32,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate, userStats, stocks, up
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <h1 className="text-4xl font-heading font-extrabold text-slate-900 mb-2 tracking-tight">
-            Hello, {isFinance ? 'Investor' : 'Founder'}! 🚀
+            Hello, {isFinance ? 'Investor' : 'Entrepreneur'}! 🚀
           </h1>
           <p className="text-slate-500 text-lg font-light">Your path to financial freedom starts here.</p>
         </div>
@@ -50,7 +49,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate, userStats, stocks, up
             onClick={() => updateStats({ activeSkill: SkillType.ENTREPRENEURSHIP })}
             className={`px-6 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${!isFinance ? 'bg-white shadow-md text-rose-600 scale-[1.02]' : 'text-slate-500 hover:text-rose-400'}`}
           >
-            <Rocket size={16} /> Founder
+            <Rocket size={16} /> Entrepreneurship
           </button>
         </div>
       </header>
@@ -101,7 +100,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate, userStats, stocks, up
               <Award size={28} />
             </div>
             <div>
-              <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">{isFinance ? 'Trader XP' : 'Founder XP'}</p>
+              <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">{isFinance ? 'Trader XP' : 'Entre XP'}</p>
               <p className="text-3xl font-heading font-extrabold text-slate-900">{currentXp.toLocaleString()}</p>
             </div>
           </div>
@@ -152,7 +151,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate, userStats, stocks, up
               <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-white mb-8 border border-white/20 backdrop-blur-md">
                 {isFinance ? <CandlestickChart size={24} /> : <Rocket size={24} />}
               </div>
-              <h2 className="text-4xl font-heading font-bold text-white mb-4 tracking-tight">{isFinance ? 'Market Terminal' : 'Startup Studio'}</h2>
+              <h2 className="text-4xl font-heading font-bold text-white mb-4 tracking-tight">{isFinance ? 'Market Terminal' : 'Entrepreneurship Studio'}</h2>
               <p className="text-white/70 text-lg max-w-md leading-relaxed font-light">
                 {isFinance ? 'Experience real-time simulated trading with global assets.' : 'Validate ideas, build MVPs and secure venture capital funding.'}
               </p>
@@ -175,7 +174,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate, userStats, stocks, up
               </div>
               <h2 className="text-4xl font-heading font-bold text-slate-900 mb-4 tracking-tight">AI Expert Advisor</h2>
               <p className="text-slate-500 text-lg max-w-md leading-relaxed font-light">
-                {isFinance ? 'Need clarity on compound interest or portfolio theory? FinBot is ready.' : 'Stuck on your customer persona? EntreBot provides strategic feedback.'}
+                {isFinance ? 'Need clarity on compound interest or portfolio theory? FinBot is ready.' : 'Stuck on your business model? EntreBot provides strategic feedback.'}
               </p>
             </div>
             <div className="mt-12 flex items-center gap-3 text-indigo-600 font-bold text-xl">

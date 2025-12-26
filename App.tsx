@@ -9,10 +9,9 @@ import Advisor from './views/Advisor';
 import Market from './views/Market';
 import StartupSimulator from './views/StartupSimulator';
 import Leaderboard from './views/Leaderboard';
-import { ViewState, UserStats, Stock, NewsItem, PendingOrder, SkillType } from './types';
+import { ViewState, UserStats, Stock, NewsItem, SkillType } from './types';
 import { Menu } from 'lucide-react';
 import { INITIAL_STOCKS, generateMarketNews, calculateNextPrice } from './utils/marketData';
-import confetti from 'canvas-confetti';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<ViewState>(ViewState.DASHBOARD);
@@ -34,7 +33,8 @@ const App: React.FC = () => {
     achievements: [],
     missions: [],
     streakDays: 3,
-    activeSkill: SkillType.FINANCE
+    activeSkill: SkillType.FINANCE,
+    savedStartups: []
   });
 
   useEffect(() => {
@@ -58,7 +58,7 @@ const App: React.FC = () => {
       case ViewState.DASHBOARD: return <Dashboard onNavigate={setCurrentView} userStats={userStats} stocks={stocks} updateStats={updateStats} />;
       case ViewState.LEARN: return <Learn userStats={userStats} updateStats={updateStats} />;
       case ViewState.QUIZ: return <Quiz userStats={userStats} updateStats={updateStats} />;
-      case ViewState.CALCULATORS: return <Calculators />;
+      case ViewState.CALCULATORS: return <Calculators userStats={userStats} />;
       case ViewState.MARKET: return <Market userStats={userStats} updateStats={updateStats} stocks={stocks} newsFeed={newsFeed} />;
       case ViewState.SIMULATOR: return <StartupSimulator userStats={userStats} updateStats={updateStats} />;
       case ViewState.ADVISOR: return <Advisor activeSkill={userStats.activeSkill} />;

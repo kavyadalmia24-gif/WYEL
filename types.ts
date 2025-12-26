@@ -15,71 +15,44 @@ export enum SkillType {
   ENTREPRENEURSHIP = 'ENTREPRENEURSHIP',
 }
 
+export enum StartupJourneyStage {
+  IDEATION = 'IDEATION',
+  DISCOVERY = 'DISCOVERY',
+  MARKET = 'MARKET',
+  PRODUCT = 'PRODUCT',
+  STRATEGY = 'STRATEGY',
+  PROTOTYPE = 'PROTOTYPE',
+  VALIDATION = 'VALIDATION',
+  PITCH = 'PITCH'
+}
+
+export interface PitchSlide {
+  title: string;
+  content: string;
+  keyPoints: string[];
+}
+
 export interface StartupState {
+  id: string;
   name: string;
-  industry: string;
-  problem: string;
-  model: 'B2B' | 'B2C' | 'SaaS' | 'Marketplace';
-  stage: 'IDEATION' | 'VALIDATION' | 'TRACTION' | 'FUNDRAISING';
-  budget: number;
-  time: number; // In days/units
-  metrics: {
-    demand: number;
-    wtp: number; // Willingness to pay
-    retention: number;
-    users: number;
-    mrr: number;
-    burn: number;
-    confidence: number;
+  currentStage: StartupJourneyStage;
+  interests: string;
+  data: {
+    problem: string;
+    solution: string;
+    targetUser: string;
+    tam: string;
+    competitors: string;
+    mvpFeatures: string[];
+    techStack: string;
+    revenueModel: string;
+    gtmStrategy: string;
+    validationPlan: string;
+    userFlow: string;
   };
-  valuation: number;
-  equityOffered: number;
-}
-
-export interface Investor {
-  id: string;
-  name: string;
-  type: 'Angel' | 'VC' | 'Accelerator';
-  appetite: 'Aggressive' | 'Balanced' | 'Conservative';
-  prefIndustries: string[];
-  minTraction: number;
-  avatar: string;
-}
-
-export interface PortfolioItem {
-  symbol: string;
-  quantity: number;
-  avgPrice: number;
-  type: 'LONG' | 'SHORT';
-  leverage: number;
-}
-
-export interface PendingOrder {
-  id: string;
-  symbol: string;
-  type: 'LIMIT_BUY' | 'LIMIT_SELL' | 'STOP_LOSS';
-  targetPrice: number;
-  quantity: number;
-  leverage: number;
-}
-
-export interface Achievement {
-  id: string;
-  title: string;
-  description: string;
-  icon: string;
-  unlocked: boolean;
-}
-
-export interface Mission {
-  id: string;
-  title: string;
-  target: number;
-  progress: number;
-  rewardXP: number;
-  rewardCoins: number;
-  completed: boolean;
-  type: 'TRADE_COUNT' | 'PROFIT_TARGET' | 'DIVERSIFY' | 'STARTUP_STEP';
+  pitchDeck: PitchSlide[];
+  isCompleted: boolean;
+  xpEarned: number;
 }
 
 export interface UserStats {
@@ -89,15 +62,24 @@ export interface UserStats {
   coins: number;
   lessonsCompleted: number;
   quizScore: number;
-  completedChapterIds?: string[];
   walletBalance: number;
-  holdings: PortfolioItem[];
+  holdings: any[];
   watchlist: string[];
-  pendingOrders: PendingOrder[];
-  achievements: Achievement[];
-  missions: Mission[];
+  pendingOrders: any[];
+  achievements: any[];
+  missions: any[];
   streakDays: number;
   activeSkill: SkillType;
+  savedStartups: StartupState[];
+}
+
+export interface NewsItem {
+  id: string;
+  headline: string;
+  sentiment: 'POSITIVE' | 'NEGATIVE' | 'NEUTRAL';
+  affectedSymbol?: string;
+  affectedSector?: string;
+  timestamp: string;
 }
 
 export interface Stock {
@@ -111,41 +93,15 @@ export interface Stock {
   volatility: number;
 }
 
-export interface NewsItem {
-  id: string;
-  headline: string;
-  sentiment: 'POSITIVE' | 'NEGATIVE' | 'NEUTRAL';
-  affectedSector?: string;
-  affectedSymbol?: string;
-  timestamp: string;
-}
-
 export interface QuizQuestion {
   id: number;
   question: string;
   options: string[];
   correctAnswer: number;
   explanation: string;
-  category?: string;
-  difficulty?: 'Easy' | 'Medium' | 'Hard';
   skillType?: SkillType;
-}
-
-export interface CalculationResult {
-  investedAmount: number;
-  totalInterest: number;
-  totalValue: number;
-  monthlyEMI?: number;
-  breakdown: Array<{ year: number; balance: number; invested: number }>;
-  chartData?: Array<{ name: string; value: number; color: string }>;
-  pieSegments?: Array<{ name: string; value: number; color: string }>;
-}
-
-export interface ChatMessage {
-  id: string;
-  role: 'user' | 'model';
-  text: string;
-  timestamp: Date;
+  category?: string;
+  difficulty?: string;
 }
 
 export interface GeneratedLessonData {
@@ -153,4 +109,28 @@ export interface GeneratedLessonData {
   content: string;
   quiz: QuizQuestion[];
   simulator?: 'SIP' | 'LUMPSUM' | 'EMI' | 'null' | null;
+}
+
+export interface CalculationResult {
+  investedAmount: number;
+  totalInterest: number;
+  totalValue: number;
+  monthlyEMI?: number;
+  breakdown: Array<{
+    year: number;
+    balance: number;
+    invested: number;
+  }>;
+  chartData?: Array<{
+    name: string;
+    value: number;
+    color: string;
+  }>;
+}
+
+export interface ChatMessage {
+  id: string;
+  role: 'user' | 'model';
+  text: string;
+  timestamp: Date;
 }

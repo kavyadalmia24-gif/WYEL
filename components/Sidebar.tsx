@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { LayoutDashboard, GraduationCap, BrainCircuit, Sparkles, PieChart, CandlestickChart, X, User, Trophy, Rocket } from 'lucide-react';
 import { ViewState, SkillType } from '../types';
@@ -18,7 +17,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate, isOpen, setI
     { id: ViewState.LEARN, label: 'Academy', icon: GraduationCap },
     { 
         id: activeSkill === SkillType.FINANCE ? ViewState.MARKET : ViewState.SIMULATOR, 
-        label: activeSkill === SkillType.FINANCE ? 'Market' : 'Startup Builder', 
+        label: activeSkill === SkillType.FINANCE ? 'Market' : 'Entrepreneurship Studio', 
         icon: activeSkill === SkillType.FINANCE ? CandlestickChart : Rocket 
     },
     { id: ViewState.CALCULATORS, label: 'Simulators', icon: PieChart },
@@ -38,7 +37,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate, isOpen, setI
             <div className={`w-10 h-10 bg-gradient-to-br ${activeSkill === SkillType.FINANCE ? 'from-indigo-600 to-violet-600' : 'from-rose-600 to-orange-600'} rounded-xl flex items-center justify-center shadow-lg`}>
               <span className="text-white font-heading font-bold text-2xl">{activeSkill === SkillType.FINANCE ? 'D' : 'E'}</span>
             </div>
-            <span className="text-2xl font-heading font-bold text-slate-800 tracking-tight">{activeSkill === SkillType.FINANCE ? 'Denari' : 'EntreApp'}</span>
+            <span className="text-2xl font-heading font-bold text-slate-800 tracking-tight">{activeSkill === SkillType.FINANCE ? 'Denari' : 'Entrepreneurship'}</span>
           </div>
           <button onClick={() => setIsOpen(false)} className="md:hidden text-slate-400 hover:text-slate-800"><X size={24} /></button>
         </div>
@@ -59,7 +58,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate, isOpen, setI
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center text-white font-bold"><User size={18} /></div>
                 <div className="flex-1 overflow-hidden">
-                  <p className="text-sm font-bold text-slate-800 truncate">{activeSkill === SkillType.FINANCE ? 'Financial Portfolio' : 'Startup Studio'}</p>
+                  <p className="text-sm font-bold text-slate-800 truncate">{activeSkill === SkillType.FINANCE ? 'Financial Portfolio' : 'Entrepreneur Studio'}</p>
                   <p className="text-xs text-indigo-600 font-medium truncate">Pro Access</p>
                 </div>
               </div>
