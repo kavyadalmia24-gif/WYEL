@@ -1,16 +1,14 @@
 
 import React, { useState } from 'react';
-/* Added missing Search, BarChart3, DollarSign, Megaphone, and Users2 icons from lucide-react */
 import { 
   TrendingUp, Rocket, ChevronRight, PlayCircle, ArrowLeft, BookOpen, Zap, Award, Target, Sun, CreditCard, Home, AlertTriangle, ShieldCheck, Landmark, PiggyBank, Briefcase, Lightbulb, Sparkles, ChevronDown, ChevronUp, Users, Gavel, Settings, BadgeDollarSign,
-  Search, BarChart3, DollarSign, Megaphone, Users2
+  Search, BarChart3, DollarSign, Megaphone, Users2, Loader2, RefreshCw
 } from 'lucide-react';
 import { generateLessonContent } from '../services/geminiService';
 import { GeneratedLessonData, UserStats, SkillType } from '../types';
 import MiniCalculator from '../components/MiniCalculators';
 import confetti from 'canvas-confetti';
 
-/* Added missing LearnProps interface definition */
 interface LearnProps {
   userStats: UserStats;
   updateStats: (newStats: Partial<UserStats>) => void;
@@ -62,6 +60,7 @@ const Learn: React.FC<LearnProps> = ({ userStats, updateStats }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showQuiz, setShowQuiz] = useState(false);
   const [expandedTrack, setExpandedTrack] = useState<number | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const curriculum = userStats.activeSkill === SkillType.FINANCE ? FINANCE_CURRICULUM : ENTREPRENEUR_CURRICULUM;
 
@@ -69,12 +68,31 @@ const Learn: React.FC<LearnProps> = ({ userStats, updateStats }) => {
     setSelectedTopic(topic);
     setSelectedModule(module);
     setIsLoading(true);
+    setError(null);
     setShowQuiz(false);
+
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error("Request timed out")), 30000)
+    );
+
     try {
-      const content = await generateLessonContent(topic, module);
-      setLessonContent(content);
-    } catch (error) {
-      console.error(error);
+      const content = await Promise.race([
+        generateLessonContent(topic, module),
+        timeoutPromise
+      ]) as GeneratedLessonData | null;
+
+      if (content && content.title && content.content) {
+        setLessonContent(content);
+      } else {
+        throw new Error("AI failed to return valid lesson content.");
+      }
+    } catch (err: any) {
+      console.error("Lesson Error:", err);
+      setError(
+        err.message === "Request timed out" 
+          ? "The Academy AI is taking longer than usual. Please try again."
+          : "We couldn't draft your curriculum right now. Please check your connection."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -92,6 +110,63 @@ const Learn: React.FC<LearnProps> = ({ userStats, updateStats }) => {
     setShowQuiz(false);
   };
 
+  /**
+   * Robust light-weight Markdown-to-JSX renderer
+   */
+  const renderMarkdown = (text: string) => {
+    const lines = text.split('\n');
+    return lines.map((line, idx) => {
+      const trimmed = line.trim();
+      
+      // H1 Header
+      if (trimmed.startsWith('# ')) {
+        return <h1 key={idx} className="text-4xl font-black mt-10 mb-6 text-slate-900 leading-tight">{trimmed.replace('# ', '')}</h1>;
+      }
+      
+      // H2 Header
+      if (trimmed.startsWith('## ')) {
+        return <h2 key={idx} className="text-3xl font-black mt-12 mb-6 text-slate-900 border-b pb-4 leading-tight">{trimmed.replace('## ', '')}</h2>;
+      }
+      
+      // H3 Header
+      if (trimmed.startsWith('### ')) {
+        return <h3 key={idx} className="text-2xl font-black mt-8 mb-4 text-slate-800 leading-tight">{trimmed.replace('### ', '')}</h3>;
+      }
+
+      // List Items
+      if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+        return (
+          <li key={idx} className="ml-6 mb-2 list-disc text-slate-700">
+            {renderInlines(trimmed.substring(2))}
+          </li>
+        );
+      }
+
+      // Empty Lines
+      if (trimmed === '') return <div key={idx} className="h-4" />;
+
+      // Standard Paragraph
+      return (
+        <p key={idx} className="mb-6 leading-relaxed text-slate-700 text-lg">
+          {renderInlines(trimmed)}
+        </p>
+      );
+    });
+  };
+
+  /**
+   * Helper to render inline markdown like **bold**
+   */
+  const renderInlines = (text: string) => {
+    const parts = text.split(/(\*\*.*?\*\*)/g);
+    return parts.map((part, i) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        return <strong key={i} className="font-black text-slate-900">{part.slice(2, -2)}</strong>;
+      }
+      return part;
+    });
+  };
+
   if (lessonContent && !showQuiz) {
     return (
       <div className="max-w-4xl mx-auto py-8 animate-in slide-in-from-bottom-4">
@@ -105,10 +180,8 @@ const Learn: React.FC<LearnProps> = ({ userStats, updateStats }) => {
               <span className="text-slate-600 text-sm font-bold">{selectedModule}</span>
           </div>
           <h1 className="text-5xl font-heading font-black text-slate-900 mb-10 leading-tight">{lessonContent.title}</h1>
-          <div className="prose prose-slate prose-lg max-w-none text-slate-700 leading-relaxed space-y-8">
-             {lessonContent.content.split('\n').map((line, i) => (
-               <p key={i}>{line.startsWith('##') ? <strong className="text-3xl block mt-12 mb-6 text-slate-900 border-b pb-4">{line.replace('##', '').trim()}</strong> : line}</p>
-             ))}
+          <div className="prose-container max-w-none">
+             {renderMarkdown(lessonContent.content)}
           </div>
           {lessonContent.simulator && lessonContent.simulator !== 'null' && (
             <div className="mt-16 pt-16 border-t border-slate-100">
@@ -169,6 +242,24 @@ const Learn: React.FC<LearnProps> = ({ userStats, updateStats }) => {
         </div>
       </div>
 
+      {error && (
+        <div className="bg-rose-50 border border-rose-200 p-6 rounded-[2rem] flex flex-col items-center gap-4 text-rose-700 animate-in slide-in-from-top-4 shadow-lg">
+          <div className="flex items-center gap-4 w-full">
+            <AlertTriangle className="shrink-0 text-rose-600" size={32} />
+            <div className="flex-1">
+              <p className="font-black text-lg">Academic Interrupt</p>
+              <p className="font-medium text-sm opacity-80">{error}</p>
+            </div>
+            <button onClick={() => handleStartLesson(selectedTopic || "", selectedModule || "")} className="bg-rose-600 text-white p-3 rounded-full hover:bg-rose-700 transition-all shadow-md">
+              <RefreshCw size={18} />
+            </button>
+            <button onClick={() => setError(null)} className="p-3 text-rose-300 hover:text-rose-600 transition-all">
+              Dismiss
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {curriculum.map((track, idx) => {
           const Icon = track.icon;
@@ -187,7 +278,7 @@ const Learn: React.FC<LearnProps> = ({ userStats, updateStats }) => {
                 <h3 className="text-3xl font-heading font-bold text-slate-900 mb-8 leading-tight">{track.title}</h3>
                 <div className="space-y-4 flex-1">
                   {(isExpanded ? track.modules : track.modules.slice(0, 5)).map((mod, modIdx) => (
-                    <button key={modIdx} onClick={() => handleStartLesson(track.title, mod)} className="w-full flex items-center justify-between p-6 rounded-3xl bg-slate-50 hover:bg-white hover:scale-[1.03] hover:shadow-xl hover:border-indigo-200 border border-transparent transition-all text-left group/mod">
+                    <button key={modIdx} onClick={() => handleStartLesson(track.title, mod)} disabled={isLoading} className="w-full flex items-center justify-between p-6 rounded-3xl bg-slate-50 hover:bg-white hover:scale-[1.03] hover:shadow-xl hover:border-indigo-200 border border-transparent transition-all text-left group/mod disabled:opacity-50">
                       <span className="text-sm font-bold text-slate-700 group-hover/mod:text-indigo-800">{mod}</span>
                       <PlayCircle size={24} className="text-slate-300 group-hover/mod:text-indigo-600 transition-colors" />
                     </button>
@@ -213,9 +304,10 @@ const Learn: React.FC<LearnProps> = ({ userStats, updateStats }) => {
                   <h3 className="text-4xl font-heading font-black text-slate-900 mb-6">Preparing Curriculum</h3>
                   <div className="space-y-4">
                       <p className="text-slate-500 text-xl font-medium">Designing high-impact module: <br/><span className="text-indigo-600 font-bold">"{selectedModule}"</span></p>
-                      <div className="w-full bg-slate-100 h-3 rounded-full overflow-hidden mt-10">
-                          <div className="h-full bg-indigo-600 w-1/2 animate-[shimmer_2s_infinite_linear]" style={{backgroundImage: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)'}} />
+                      <div className="w-full bg-slate-100 h-3 rounded-full overflow-hidden mt-10 relative">
+                          <div className="h-full bg-indigo-600 w-full animate-shimmer" style={{backgroundImage: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)'}} />
                       </div>
+                      <p className="text-[10px] text-slate-400 font-bold uppercase mt-4 tracking-widest">Our AI is drafting custom content just for you...</p>
                   </div>
               </div>
           </div>
